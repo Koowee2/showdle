@@ -1,13 +1,11 @@
 import { GameHeader } from "@/components/GameHeader";
 import { GameBoard } from "@/components/GameBoard";
-import { SetupNotice } from "@/components/SetupNotice";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4">
         <GameHeader />
-        <SetupNotice />
         <main className="flex justify-center">
           <GameBoard />
         </main>

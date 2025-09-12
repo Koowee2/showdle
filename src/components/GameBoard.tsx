@@ -145,7 +145,7 @@ export const GameBoard = () => {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Game Statistics */}
       <div className="text-center space-y-2">
         <div className="flex justify-center gap-6 text-sm">

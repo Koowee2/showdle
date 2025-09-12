@@ -10,7 +10,7 @@ interface GameFrameProps {
 export const GameFrame = ({ src, isRevealed, status, frameNumber }: GameFrameProps) => {
   return (
     <div className={cn(
-      "showdle-card aspect-video w-full rounded-lg overflow-hidden relative transition-all duration-500",
+      "showdle-card aspect-video w-full rounded-lg overflow-hidden relative",
       !isRevealed && "opacity-50",
       status === 'correct' && "frame-correct",
       status === 'incorrect' && "frame-incorrect"
