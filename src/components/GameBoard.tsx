@@ -53,7 +53,7 @@ export const GameBoard = () => {
           .select('Show_Name');
 
         if (showsError) {
-          console.error('Error fetching show names:', error);
+          console.error('Error fetching show names:', showsError);
           return;
         }
 
@@ -78,13 +78,14 @@ export const GameBoard = () => {
     setGuesses(newGuesses);
 
     // Check if guess is correct (case-insensitive)
-    const isCorrect = guess.toLowerCase() === gameData.Answer.toLowerCase();
+    const correctAnswer = (gameData.Answer || gameData.Show_Name || '').toLowerCase();
+    const isCorrect = guess.toLowerCase() === correctAnswer;
     
     if (isCorrect) {
       setGameWon(true);
       toast({
         title: "Congratulations!",
-        description: `You guessed "${gameData.Answer}" correctly!`,
+        description: `You guessed "${gameData.Answer || gameData.Show_Name || 'the show'}" correctly!`,
         variant: "default",
       });
     } else {
@@ -100,7 +101,7 @@ export const GameBoard = () => {
         // Game over - all frames revealed
         toast({
           title: "Game Over",
-          description: `The answer was "${gameData.Answer}". Better luck tomorrow!`,
+          description: `The answer was "${gameData.Answer || gameData.Show_Name || 'the show'}". Better luck tomorrow!`,
           variant: "destructive",
         });
       }
@@ -184,7 +185,7 @@ export const GameBoard = () => {
                 🎉 Congratulations!
               </h3>
               <p className="text-muted-foreground">
-                You guessed <span className="text-foreground font-medium">"{gameData.Answer}"</span> in {guesses.length} attempt{guesses.length !== 1 ? 's' : ''}!
+                You guessed <span className="text-foreground font-medium">"{gameData.Answer || gameData.Show_Name || 'the show'}"</span> in {guesses.length} attempt{guesses.length !== 1 ? 's' : ''}!
               </p>
             </div>
             <Button onClick={resetGame} variant="game">
@@ -200,7 +201,7 @@ export const GameBoard = () => {
                 Game Over
               </h3>
               <p className="text-muted-foreground">
-                The answer was <span className="text-foreground font-medium">"{gameData.Answer}"</span>
+                The answer was <span className="text-foreground font-medium">"{gameData.Answer || gameData.Show_Name || 'the show'}"</span>
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Come back tomorrow for a new challenge!
@@ -222,7 +223,7 @@ export const GameBoard = () => {
               <span
                 key={index}
                 className={`px-3 py-1 rounded-full text-sm ${
-                  guess.toLowerCase() === gameData.Answer.toLowerCase()
+                  guess.toLowerCase() === (gameData.Answer || gameData.Show_Name || '').toLowerCase()
                     ? 'bg-success text-success-foreground'
                     : 'bg-secondary text-secondary-foreground'
                 }`}
