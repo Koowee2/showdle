@@ -3,45 +3,93 @@ import { GameFrame } from "./GameFrame";
 import { GuessInput } from "./GuessInput";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-// Mock data structure - replace with Supabase data later
-const mockGameData = {
-  id: "2024-01-15",
-  show_name: "Breaking Bad",
-  answer: "Breaking Bad",
-  frames: [
-    "https://images.unsplash.com/photo-1489599510025-e4fb9bb1c3a5?w=400&h=225&fit=crop",
-    "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=400&h=225&fit=crop", 
-    "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=400&h=225&fit=crop",
-    "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=225&fit=crop",
-    "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=400&h=225&fit=crop"
-  ]
-};
+interface ShowData {
+  id: number;
+  Show_Name: string;
+  Answer: string;
+  Frame_url_1: string;
+  Frame_url_2: string;
+  Frame_url_3: string;
+  Frame_url_4: string;
+  Frame_url_5: string;
+  date: string;
+}
 
 export const GameBoard = () => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [gameWon, setGameWon] = useState(false);
-  const [gameData] = useState(mockGameData);
+  const [gameData, setGameData] = useState<ShowData | null>(null);
+  const [showNames, setShowNames] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  useEffect(() => {
+    const fetchTodaysGame = async () => {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Fetch today's game
+        const { data: showData, error } = await supabase
+          .from('Show')
+          .select('*')
+          .eq('date', today)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error fetching game:', error);
+          return;
+        }
+
+        if (showData) {
+          setGameData(showData);
+        }
+
+        // Fetch all show names for autocomplete
+        const { data: allShows, error: showsError } = await supabase
+          .from('Show')
+          .select('Show_Name');
+
+        if (showsError) {
+          console.error('Error fetching show names:', error);
+          return;
+        }
+
+        if (allShows) {
+          const names = allShows.map(show => show.Show_Name).filter(Boolean);
+          setShowNames(names);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTodaysGame();
+  }, []);
+
   const handleGuess = (guess: string) => {
+    if (!gameData) return;
+    
     const newGuesses = [...guesses, guess];
     setGuesses(newGuesses);
 
     // Check if guess is correct (case-insensitive)
-    const isCorrect = guess.toLowerCase() === gameData.answer.toLowerCase();
+    const isCorrect = guess.toLowerCase() === gameData.Answer.toLowerCase();
     
     if (isCorrect) {
       setGameWon(true);
       toast({
         title: "Congratulations!",
-        description: `You guessed "${gameData.answer}" correctly!`,
+        description: `You guessed "${gameData.Answer}" correctly!`,
         variant: "default",
       });
     } else {
       // Reveal next frame if available
-      if (currentFrame < gameData.frames.length - 1) {
+      if (currentFrame < 4) { // 5 frames total (0-4)
         setCurrentFrame(currentFrame + 1);
         toast({
           title: "Keep trying!",
@@ -52,7 +100,7 @@ export const GameBoard = () => {
         // Game over - all frames revealed
         toast({
           title: "Game Over",
-          description: `The answer was "${gameData.answer}". Better luck tomorrow!`,
+          description: `The answer was "${gameData.Answer}". Better luck tomorrow!`,
           variant: "destructive",
         });
       }
@@ -64,6 +112,33 @@ export const GameBoard = () => {
     setGuesses([]);
     setGameWon(false);
   };
+
+  const getCurrentFrameUrl = () => {
+    if (!gameData) return null;
+    const frameKeys = ['Frame_url_1', 'Frame_url_2', 'Frame_url_3', 'Frame_url_4', 'Frame_url_5'] as const;
+    return gameData[frameKeys[currentFrame]];
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto text-center py-16">
+        <div className="text-muted-foreground">Loading today's game...</div>
+      </div>
+    );
+  }
+
+  if (!gameData) {
+    return (
+      <div className="w-full max-w-4xl mx-auto text-center py-16">
+        <div className="showdle-card p-8 rounded-lg">
+          <h3 className="text-xl font-bold mb-2">No Game Available</h3>
+          <p className="text-muted-foreground">
+            No game found for today. Check back later!
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8">
@@ -79,26 +154,26 @@ export const GameBoard = () => {
         </div>
       </div>
 
-      {/* Game Frames */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {gameData.frames.map((frame, index) => (
+      {/* Single Frame Display */}
+      <div className="flex justify-center">
+        <div className="w-full max-w-2xl">
           <GameFrame
-            key={index}
-            src={frame}
-            isRevealed={index <= currentFrame}
-            status={gameWon ? 'correct' : (guesses.length > 0 && index === currentFrame && !gameWon) ? 'incorrect' : null}
-            frameNumber={index + 1}
+            src={getCurrentFrameUrl()}
+            isRevealed={true}
+            status={gameWon ? 'correct' : (guesses.length > 0 && !gameWon) ? 'incorrect' : null}
+            frameNumber={currentFrame + 1}
           />
-        ))}
+        </div>
       </div>
 
       {/* Game Input */}
       <div className="flex flex-col items-center space-y-4">
-        {!gameWon && currentFrame < gameData.frames.length ? (
+        {!gameWon && currentFrame < 5 ? (
           <GuessInput
             onGuess={handleGuess}
             disabled={gameWon}
-            placeholder={`Guess the TV show... (${guesses.length + 1}/${gameData.frames.length})`}
+            placeholder={`Guess the TV show... (${guesses.length + 1}/5)`}
+            suggestions={showNames}
           />
         ) : null}
         
@@ -109,7 +184,7 @@ export const GameBoard = () => {
                 🎉 Congratulations!
               </h3>
               <p className="text-muted-foreground">
-                You guessed <span className="text-foreground font-medium">"{gameData.answer}"</span> in {guesses.length} attempt{guesses.length !== 1 ? 's' : ''}!
+                You guessed <span className="text-foreground font-medium">"{gameData.Answer}"</span> in {guesses.length} attempt{guesses.length !== 1 ? 's' : ''}!
               </p>
             </div>
             <Button onClick={resetGame} variant="game">
@@ -118,14 +193,14 @@ export const GameBoard = () => {
           </div>
         )}
 
-        {!gameWon && currentFrame >= gameData.frames.length - 1 && guesses.length > 0 && (
+        {!gameWon && currentFrame >= 4 && guesses.length > 0 && (
           <div className="text-center space-y-4">
             <div className="showdle-card p-6 rounded-lg">
               <h3 className="text-xl font-bold text-error mb-2">
                 Game Over
               </h3>
               <p className="text-muted-foreground">
-                The answer was <span className="text-foreground font-medium">"{gameData.answer}"</span>
+                The answer was <span className="text-foreground font-medium">"{gameData.Answer}"</span>
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Come back tomorrow for a new challenge!
@@ -147,7 +222,7 @@ export const GameBoard = () => {
               <span
                 key={index}
                 className={`px-3 py-1 rounded-full text-sm ${
-                  guess.toLowerCase() === gameData.answer.toLowerCase()
+                  guess.toLowerCase() === gameData.Answer.toLowerCase()
                     ? 'bg-success text-success-foreground'
                     : 'bg-secondary text-secondary-foreground'
                 }`}
