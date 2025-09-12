@@ -30,6 +30,7 @@ export const GameBoard = () => {
     const fetchTodaysGame = async () => {
       try {
         const today = new Date().toISOString().split('T')[0];
+        console.log('Looking for game on date:', today);
         
         // Fetch today's game
         const { data: showData, error } = await supabase
@@ -42,6 +43,8 @@ export const GameBoard = () => {
           console.error('Error fetching game:', error);
           return;
         }
+
+        console.log('Show data found:', showData);
 
         if (showData) {
           setGameData(showData);
