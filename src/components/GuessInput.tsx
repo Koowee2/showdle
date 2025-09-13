@@ -83,7 +83,7 @@ export const GuessInput = ({ onGuess, disabled = false, placeholder = "Enter you
           />
           
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
+            <div className="absolute bottom-full left-0 right-0 z-50 mb-1 bg-background border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
               {filteredSuggestions.map((suggestion, index) => (
                 <button
                   key={suggestion}

@@ -145,9 +145,8 @@
   }
   
   .frame-incorrect {
-    @apply animate-bounce;
     border: 2px solid hsl(var(--error));
-    box-shadow: 0 0 15px hsl(var(--error) / 0.5);
+    box-shadow: 0 0 15px hsl(var(--error) / 0.35);
   }
 
   /* Game Elements */
