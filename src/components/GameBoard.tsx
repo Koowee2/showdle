@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { GameFrame } from "./GameFrame";
 import { GuessInput } from "./GuessInput";
-import { Button } from "@/components/ui/button";
+import { ShareResults } from "./ShareResults";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -111,11 +111,6 @@ export const GameBoard = () => {
     }
   };
 
-  const resetGame = () => {
-    setCurrentFrame(0);
-    setGuesses([]);
-    setGameWon(false);
-  };
 
   const getCurrentFrameUrl = () => {
     if (!gameData) return null;
@@ -181,39 +176,12 @@ export const GameBoard = () => {
           />
         ) : null}
         
-        {gameWon && (
-          <div className="text-center space-y-4">
-            <div className="showdle-card p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-success mb-2">
-                🎉 Congratulations!
-              </h3>
-              <p className="text-muted-foreground">
-                You guessed <span className="text-foreground font-medium">"{gameData.Answer || gameData.Show_Name || 'the show'}"</span> in {guesses.length} attempt{guesses.length !== 1 ? 's' : ''}!
-              </p>
-            </div>
-            <Button onClick={resetGame} variant="game">
-              Play Again
-            </Button>
-          </div>
-        )}
-
-        {!gameWon && currentFrame >= 4 && guesses.length > 0 && (
-          <div className="text-center space-y-4">
-            <div className="showdle-card p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-error mb-2">
-                Game Over
-              </h3>
-              <p className="text-muted-foreground">
-                The answer was <span className="text-foreground font-medium">"{gameData.Answer || gameData.Show_Name || 'the show'}"</span>
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Come back tomorrow for a new challenge!
-              </p>
-            </div>
-            <Button onClick={resetGame} variant="outline">
-              Try Again
-            </Button>
-          </div>
+        {(gameWon || (!gameWon && currentFrame >= 4 && guesses.length > 0)) && (
+          <ShareResults 
+            guessCount={guesses.length}
+            maxGuesses={5}
+            gameWon={gameWon}
+          />
         )}
       </div>
 
