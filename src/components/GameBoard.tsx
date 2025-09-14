@@ -28,6 +28,8 @@ export const GameBoard = () => {
   const [statsUpdated, setStatsUpdated] = useState(false);
   const { toast } = useToast();
   const { updateStats } = useGameStats();
+  const [gameCompleted, setGameCompleted] = useState(false);
+  const [completedGuessCount, setCompletedGuessCount] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchTodaysGame = async () => {
@@ -51,6 +53,20 @@ export const GameBoard = () => {
 
         if (showData) {
           setGameData(showData);
+          const completionKey = `showdle-completion-${showData.date || today}`;
+          const saved = localStorage.getItem(completionKey);
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              setGameWon(!!parsed.won);
+              setGameCompleted(true);
+              setCompletedGuessCount(typeof parsed.guesses === 'number' ? parsed.guesses : null);
+              setStatsUpdated(true);
+              setCurrentFrame(4);
+            } catch (e) {
+              console.error('Error parsing saved completion:', e);
+            }
+          }
         }
 
         // Fetch all show names for autocomplete
@@ -93,6 +109,13 @@ export const GameBoard = () => {
         updateStats(true);
         setStatsUpdated(true);
       }
+      // Persist completion for today
+      if (!gameCompleted) {
+        const completionKey = `showdle-completion-${gameData.date || new Date().toISOString().split('T')[0]}`;
+        localStorage.setItem(completionKey, JSON.stringify({ won: true, guesses: newGuesses.length }));
+        setGameCompleted(true);
+        setCompletedGuessCount(newGuesses.length);
+      }
       toast({
         title: "Congratulations!",
         description: `You guessed "${gameData.Answer || gameData.Show_Name || 'the show'}" correctly!`,
@@ -112,6 +135,13 @@ export const GameBoard = () => {
         if (!statsUpdated) {
           updateStats(false);
           setStatsUpdated(true);
+        }
+        // Persist loss for today
+        if (!gameCompleted) {
+          const completionKey = `showdle-completion-${gameData.date || new Date().toISOString().split('T')[0]}`;
+          localStorage.setItem(completionKey, JSON.stringify({ won: false, guesses: newGuesses.length }));
+          setGameCompleted(true);
+          setCompletedGuessCount(newGuesses.length);
         }
         toast({
           title: "Game Over",
@@ -159,7 +189,7 @@ export const GameBoard = () => {
             Frame: <span className="text-foreground font-medium">{currentFrame + 1}/5</span>
           </span>
           <span className="text-muted-foreground">
-            Guesses: <span className="text-foreground font-medium">{guesses.length}</span>
+            Guesses: <span className="text-foreground font-medium">{completedGuessCount ?? guesses.length}</span>
           </span>
         </div>
       </div>
@@ -178,18 +208,18 @@ export const GameBoard = () => {
 
       {/* Game Input */}
       <div className="flex flex-col items-center space-y-4">
-        {!gameWon && currentFrame < 5 ? (
+        {!gameCompleted && currentFrame < 5 ? (
           <GuessInput
             onGuess={handleGuess}
-            disabled={gameWon}
+            disabled={gameCompleted}
             placeholder={`Guess the TV show... (${guesses.length + 1}/5)`}
             suggestions={showNames}
           />
         ) : null}
         
-        {(gameWon || (!gameWon && currentFrame >= 4 && guesses.length > 0)) && (
+        {gameCompleted && (
           <ShareResults 
-            guessCount={guesses.length}
+            guessCount={completedGuessCount ?? guesses.length}
             maxGuesses={5}
             gameWon={gameWon}
           />
