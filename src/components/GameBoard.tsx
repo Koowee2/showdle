@@ -3,6 +3,7 @@ import { GameFrame } from "./GameFrame";
 import { GuessInput } from "./GuessInput";
 import { ShareResults } from "./ShareResults";
 import { useToast } from "@/hooks/use-toast";
+import { useGameStats } from "@/hooks/useGameStats";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ShowData {
@@ -24,7 +25,9 @@ export const GameBoard = () => {
   const [gameData, setGameData] = useState<ShowData | null>(null);
   const [showNames, setShowNames] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statsUpdated, setStatsUpdated] = useState(false);
   const { toast } = useToast();
+  const { updateStats } = useGameStats();
 
   useEffect(() => {
     const fetchTodaysGame = async () => {
@@ -86,6 +89,10 @@ export const GameBoard = () => {
     
     if (isCorrect) {
       setGameWon(true);
+      if (!statsUpdated) {
+        updateStats(true);
+        setStatsUpdated(true);
+      }
       toast({
         title: "Congratulations!",
         description: `You guessed "${gameData.Answer || gameData.Show_Name || 'the show'}" correctly!`,
@@ -102,6 +109,10 @@ export const GameBoard = () => {
         });
       } else {
         // Game over - all frames revealed
+        if (!statsUpdated) {
+          updateStats(false);
+          setStatsUpdated(true);
+        }
         toast({
           title: "Game Over",
           description: `The answer was "${gameData.Answer || gameData.Show_Name || 'the show'}". Better luck tomorrow!`,
