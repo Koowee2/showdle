@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { format } from "date-fns";
 import { GameFrame } from "./GameFrame";
 import { GuessInput } from "./GuessInput";
 import { ShareResults } from "./ShareResults";
@@ -34,7 +35,7 @@ export const GameBoard = () => {
   useEffect(() => {
     const fetchTodaysGame = async () => {
       try {
-        const today = new Date().toISOString().split('T')[0];
+        const today = format(new Date(), 'yyyy-MM-dd');
         console.log('Looking for game on date:', today);
         
         // Fetch today's game
@@ -111,7 +112,7 @@ export const GameBoard = () => {
       }
       // Persist completion for today
       if (!gameCompleted) {
-        const completionKey = `showdle-completion-${gameData.date || new Date().toISOString().split('T')[0]}`;
+        const completionKey = `showdle-completion-${gameData.date || format(new Date(), 'yyyy-MM-dd')}`;
         localStorage.setItem(completionKey, JSON.stringify({ won: true, guesses: newGuesses.length }));
         setGameCompleted(true);
         setCompletedGuessCount(newGuesses.length);
@@ -138,7 +139,7 @@ export const GameBoard = () => {
         }
         // Persist loss for today
         if (!gameCompleted) {
-          const completionKey = `showdle-completion-${gameData.date || new Date().toISOString().split('T')[0]}`;
+          const completionKey = `showdle-completion-${gameData.date || format(new Date(), 'yyyy-MM-dd')}`;
           localStorage.setItem(completionKey, JSON.stringify({ won: false, guesses: newGuesses.length }));
           setGameCompleted(true);
           setCompletedGuessCount(newGuesses.length);
