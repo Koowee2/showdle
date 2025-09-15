@@ -84,7 +84,14 @@ showdle.lovable.app`;
           </div>
           <div className="text-muted-foreground mt-4">
             Can you beat me?<br />
-            showdle.lovable.app
+            <a 
+              href="https://showdle.lovable.app" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              showdle.lovable.app
+            </a>
           </div>
         </div>
       </div>
