@@ -33,7 +33,7 @@ Guessed in ${result}
 ${emojis}
 
 Can you beat me?
-showdle.app #Showdle`;
+showdle.lovable.app #Showdle`;
   };
 
   const handleShare = async () => {
@@ -84,7 +84,7 @@ showdle.app #Showdle`;
           </div>
           <div className="text-muted-foreground mt-4">
             Can you beat me?<br />
-            showdle.app #Showdle
+            showdle.lovable.app #Showdle
           </div>
         </div>
       </div>
