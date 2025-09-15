@@ -32,8 +32,7 @@ export const ShareResults = ({ guessCount, maxGuesses, gameWon, gameNumber }: Sh
 Guessed in ${result}
 ${emojis}
 
-Can you beat me?
-showdle.lovable.app`;
+Can you beat me?`;
   };
 
   const handleShare = async () => {
@@ -42,7 +41,9 @@ showdle.lovable.app`;
     if (navigator.share) {
       try {
         await navigator.share({
-          text: shareText
+          title: "Showdle",
+          text: shareText,
+          url: "https://showdle.lovable.app"
         });
       } catch (error) {
         // If sharing fails, fall back to clipboard
@@ -55,17 +56,23 @@ showdle.lovable.app`;
 
   const fallbackCopy = () => {
     const shareText = generateShareText();
-    navigator.clipboard.writeText(shareText).then(() => {
+    const fullText = `${shareText}\n\nhttps://showdle.lovable.app`;
+    
+    navigator.clipboard.writeText(fullText).then(() => {
       toast({
-        title: "Copied to clipboard!",
-        description: "Your results have been copied. Share them with your friends!",
+        title: "Results copied to clipboard ✅",
+        description: "",
         variant: "default",
+        duration: 2000,
+        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white border-0 rounded-lg",
       });
     }).catch(() => {
       toast({
-        title: "Share your results",
-        description: shareText,
+        title: "Results copied to clipboard ✅",
+        description: "",
         variant: "default",
+        duration: 2000,
+        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white border-0 rounded-lg",
       });
     });
   };
