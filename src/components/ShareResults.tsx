@@ -42,8 +42,7 @@ Can you beat me?`;
       try {
         await navigator.share({
           title: "Showdle",
-          text: shareText,
-          url: "https://showdle.lovable.app"
+          text: `${shareText}\n\nhttps://showdle.lovable.app`
         });
       } catch (error) {
         // If sharing fails, fall back to clipboard
@@ -64,7 +63,7 @@ Can you beat me?`;
         description: "",
         variant: "default",
         duration: 2000,
-        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white border-0 rounded-lg",
+        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white rounded-lg shadow-lg px-4 py-2 animate-in fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
       });
     }).catch(() => {
       toast({
@@ -72,7 +71,7 @@ Can you beat me?`;
         description: "",
         variant: "default",
         duration: 2000,
-        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white border-0 rounded-lg",
+        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white rounded-lg shadow-lg px-4 py-2 animate-in fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
       });
     });
   };
