@@ -222,6 +222,7 @@ export const GameBoard = () => {
             guessCount={completedGuessCount ?? guesses.length}
             maxGuesses={5}
             gameWon={gameWon}
+            gameNumber={gameData.id}
           />
         )}
       </div>

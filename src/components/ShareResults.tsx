@@ -5,10 +5,10 @@ interface ShareResultsProps {
   guessCount: number;
   maxGuesses: number;
   gameWon: boolean;
-  gameNumber?: number;
+  gameNumber: number;
 }
 
-export const ShareResults = ({ guessCount, maxGuesses, gameWon, gameNumber = 123 }: ShareResultsProps) => {
+export const ShareResults = ({ guessCount, maxGuesses, gameWon, gameNumber }: ShareResultsProps) => {
   const { toast } = useToast();
 
   const generateEmojis = () => {
@@ -33,7 +33,7 @@ Guessed in ${result}
 ${emojis}
 
 Can you beat me?
-showdle.lovable.app #Showdle`;
+showdle.lovable.app`;
   };
 
   const handleShare = async () => {
@@ -84,7 +84,7 @@ showdle.lovable.app #Showdle`;
           </div>
           <div className="text-muted-foreground mt-4">
             Can you beat me?<br />
-            showdle.lovable.app #Showdle
+            showdle.lovable.app
           </div>
         </div>
       </div>
