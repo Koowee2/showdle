@@ -32,7 +32,8 @@ export const ShareResults = ({ guessCount, maxGuesses, gameWon, gameNumber }: Sh
 Guessed in ${result}
 ${emojis}
 
-Can you beat me?`;
+Can you beat me?
+showdle.lovable.app`;
   };
 
   const handleShare = async () => {
@@ -41,8 +42,7 @@ Can you beat me?`;
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Showdle",
-          text: `${shareText}\n\nhttps://showdle.lovable.app`
+          text: shareText
         });
       } catch (error) {
         // If sharing fails, fall back to clipboard
@@ -55,23 +55,17 @@ Can you beat me?`;
 
   const fallbackCopy = () => {
     const shareText = generateShareText();
-    const fullText = `${shareText}\n\nhttps://showdle.lovable.app`;
-    
-    navigator.clipboard.writeText(fullText).then(() => {
+    navigator.clipboard.writeText(shareText).then(() => {
       toast({
-        title: "Results copied to clipboard ✅",
-        description: "",
+        title: "Copied to clipboard!",
+        description: "Your results have been copied. Share them with your friends!",
         variant: "default",
-        duration: 2000,
-        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white rounded-lg shadow-lg px-4 py-2 animate-in fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
       });
     }).catch(() => {
       toast({
-        title: "Results copied to clipboard ✅",
-        description: "",
+        title: "Share your results",
+        description: shareText,
         variant: "default",
-        duration: 2000,
-        className: "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white rounded-lg shadow-lg px-4 py-2 animate-in fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
       });
     });
   };
