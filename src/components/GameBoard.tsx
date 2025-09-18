@@ -218,6 +218,28 @@ export const GameBoard = () => {
           />
         ) : null}
         
+        {/* Win/Loss State Display */}
+        {gameCompleted && gameWon && (
+          <div className="text-center py-8">
+            <div className="text-6xl font-bold text-success mb-2">Correct!</div>
+            <div className="text-xl text-muted-foreground">
+              You guessed "{gameData.Answer || gameData.Show_Name}" in {completedGuessCount} guess{completedGuessCount !== 1 ? 'es' : ''}!
+            </div>
+          </div>
+        )}
+        
+        {gameCompleted && !gameWon && (
+          <div className="text-center py-8">
+            <div className="text-6xl font-bold text-destructive mb-2">Game Over!</div>
+            <div className="text-xl text-muted-foreground mb-2">
+              The answer was:
+            </div>
+            <div className="text-3xl font-bold text-foreground">
+              {gameData.Answer || gameData.Show_Name}
+            </div>
+          </div>
+        )}
+        
         {gameCompleted && (
           <ShareResults 
             guessCount={completedGuessCount ?? guesses.length}

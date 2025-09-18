@@ -34,9 +34,16 @@ export const GuessInput = ({ onGuess, disabled = false, placeholder = "Enter you
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (guess.trim() && !disabled) {
-      onGuess(guess.trim());
-      setGuess("");
-      setShowSuggestions(false);
+      // Only allow guesses that are in the suggestions list (case-insensitive)
+      const isValidGuess = suggestions.some(suggestion => 
+        suggestion.toLowerCase() === guess.trim().toLowerCase()
+      );
+      
+      if (isValidGuess) {
+        onGuess(guess.trim());
+        setGuess("");
+        setShowSuggestions(false);
+      }
     }
   };
 
