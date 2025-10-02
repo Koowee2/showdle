@@ -33,7 +33,8 @@ Guessed in ${result}
 ${emojis}
 
 Show me what you got!
-https://showdle.lovable.app`;
+https://showdle.lovable.app
+📺`;
   };
 
   const handleShare = async () => {
