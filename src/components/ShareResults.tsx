@@ -32,7 +32,7 @@ export const ShareResults = ({ guessCount, maxGuesses, gameWon, gameNumber }: Sh
 Guessed in ${result}
 ${emojis}
 
-Can you beat me?
+Show me what you got!
 https://showdle.lovable.app`;
   };
 
@@ -83,7 +83,7 @@ https://showdle.lovable.app`;
             <div className="text-2xl mt-2">{generateEmojis()}</div>
           </div>
           <div className="text-muted-foreground mt-4">
-            Can you beat me?<br />
+            Show me what you got!<br />
             <a 
               href="https://showdle.lovable.app" 
               target="_blank" 
@@ -92,6 +92,7 @@ https://showdle.lovable.app`;
             >
               showdle.lovable.app
             </a>
+            <div className="text-2xl mt-1">📺</div>
           </div>
         </div>
       </div>
