@@ -21,7 +21,7 @@ export const GuessInput = ({ onGuess, disabled = false, placeholder = "Enter you
     if (guess.length > 0) {
       const filtered = suggestions.filter(suggestion =>
         suggestion.toLowerCase().includes(guess.toLowerCase())
-      ).slice(0, 5);
+      );
       setFilteredSuggestions(filtered);
       setShowSuggestions(filtered.length > 0);
       setActiveSuggestion(-1);
