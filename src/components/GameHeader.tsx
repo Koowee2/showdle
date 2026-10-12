@@ -21,7 +21,7 @@ export const GameHeader = () => {
           <Tv className="w-8 h-8 text-primary" />
         </div>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-          Showdle
+          Showey
         </h1>
       </div>
       <p className="text-muted-foreground text-lg">

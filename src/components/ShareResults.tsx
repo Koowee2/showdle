@@ -28,7 +28,7 @@ export const ShareResults = ({ guessCount, maxGuesses, gameWon, gameNumber }: Sh
     const emojis = generateEmojis();
     const result = gameWon ? `${guessCount}/${maxGuesses}` : `X/${maxGuesses}`;
     
-    return `Showdle #${gameNumber}
+    return `Showey #${gameNumber}
 Guessed in ${result}
 ${emojis}
 
@@ -79,7 +79,7 @@ https://showdle.lovable.app
         </h3>
         <div className="space-y-2 text-sm">
           <div className="font-mono text-lg">
-            <div>Showdle #{gameNumber}</div>
+            <div>Showey #{gameNumber}</div>
             <div>Guessed in {gameWon ? `${guessCount}/${maxGuesses}` : `X/${maxGuesses}`}</div>
             <div className="text-2xl mt-2">{generateEmojis()}</div>
           </div>
