@@ -71,6 +71,28 @@ https://showdle.lovable.app
     });
   };
 
+  const copyQuiet = async (title: string, description: string) => {
+    try {
+      await navigator.clipboard.writeText(generateShareText());
+      toast({ title, description });
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleFacebook = async () => {
+    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://showdle.lovable.app")}`;
+    const win = window.open(fbUrl, "_blank", "noopener,noreferrer,width=600,height=500");
+    await copyQuiet("Results copied ✅", "Paste them into your Facebook post.");
+    if (!win) window.location.href = fbUrl;
+  };
+
+  const handleInstagram = async () => {
+    await copyQuiet("Results copied ✅", "Paste them into your Instagram story or message.");
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    window.open(isMobile ? "instagram://app" : "https://www.instagram.com/", "_blank");
+  };
+
   return (
     <div className="text-center space-y-4">
       <div className="showdle-card p-6 rounded-lg">
@@ -100,6 +122,14 @@ https://showdle.lovable.app
       <Button onClick={handleShare} variant="game" className="w-full max-w-xs">
         Share Results
       </Button>
+      <div className="flex gap-2 justify-center">
+        <Button onClick={handleFacebook} variant="outline" className="flex-1 max-w-[9rem]">
+          Facebook
+        </Button>
+        <Button onClick={handleInstagram} variant="outline" className="flex-1 max-w-[9rem]">
+          Instagram
+        </Button>
+      </div>
     </div>
   );
 };
