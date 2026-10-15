@@ -93,6 +93,65 @@ https://showdle.lovable.app
     window.open(isMobile ? "instagram://app" : "https://www.instagram.com/", "_blank");
   };
 
+  const buildCardBlob = (): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      const W = 1080, H = 1920;
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H;
+      const ctx = c.getContext("2d");
+      if (!ctx) return reject(new Error("no canvas"));
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, "#09090b"); bg.addColorStop(1, "#16161d");
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#18181f";
+      ctx.beginPath(); ctx.roundRect(90, 460, W - 180, 1000, 48); ctx.fill();
+      ctx.textAlign = "center";
+      const accent = ctx.createLinearGradient(300, 0, 780, 0);
+      accent.addColorStop(0, "#6366f1"); accent.addColorStop(1, "#a5b4fc");
+      ctx.fillStyle = accent;
+      ctx.font = "bold 140px system-ui, sans-serif";
+      ctx.fillText("Showey", W / 2, 330);
+      ctx.fillStyle = "#a1a1aa";
+      ctx.font = "48px system-ui, sans-serif";
+      ctx.fillText("Guess the Show.", W / 2, 400);
+      ctx.fillStyle = "#fafafa";
+      ctx.font = "bold 80px system-ui, sans-serif";
+      ctx.fillText(`Showey #${gameNumber}`, W / 2, 640);
+      ctx.font = "60px system-ui, sans-serif";
+      ctx.fillText(`Guessed in ${gameWon ? `${guessCount}/${maxGuesses}` : `X/${maxGuesses}`}`, W / 2, 780);
+      ctx.font = "110px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
+      ctx.fillText(generateEmojis(), W / 2, 980);
+      ctx.fillStyle = "#a1a1aa";
+      ctx.font = "54px system-ui, sans-serif";
+      ctx.fillText("Show me what you got!", W / 2, 1170);
+      ctx.fillStyle = "#818cf8";
+      ctx.font = "bold 54px system-ui, sans-serif";
+      ctx.fillText("showdle.lovable.app", W / 2, 1270);
+      ctx.font = "90px 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
+      ctx.fillText("📺", W / 2, 1400);
+      c.toBlob((b) => (b ? resolve(b) : reject(new Error("blob failed"))), "image/png");
+    });
+
+  const handleCopyCard = async () => {
+    const blobPromise = buildCardBlob();
+    try {
+      // Pass the promise directly so Safari keeps the tap as the user gesture
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blobPromise })]);
+      toast({ title: "Story card copied ✅", description: "Paste it into your Instagram story or any chat." });
+    } catch {
+      try {
+        const blob = await blobPromise;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = `showey-${gameNumber}.png`; a.click();
+        URL.revokeObjectURL(url);
+        toast({ title: "Story card saved", description: "Your browser can't copy images, so we downloaded it instead." });
+      } catch {
+        toast({ title: "Couldn't create story card", variant: "destructive" });
+      }
+    }
+  };
+
   return (
     <div className="text-center space-y-4">
       <div className="showdle-card p-6 rounded-lg">
@@ -130,6 +189,9 @@ https://showdle.lovable.app
           Instagram
         </Button>
       </div>
+      <Button onClick={handleCopyCard} variant="outline" className="w-full max-w-xs">
+        Copy Story Card
+      </Button>
     </div>
   );
 };
